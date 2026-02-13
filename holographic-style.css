@@ -1,0 +1,780 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background: #000000;
+    color: #00ffff;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Scan Lines Effect */
+.scan-lines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 255, 255, 0.03) 0px,
+            rgba(0, 255, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 2px);
+    pointer-events: none;
+    z-index: 1000;
+    animation: scanlineMove 8s linear infinite;
+}
+
+@keyframes scanlineMove {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(10px);
+    }
+}
+
+/* Vignette */
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    pointer-events: none;
+    z-index: 999;
+}
+
+/* Canvas Elements */
+#particleCanvas,
+#bloomCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#particleCanvas {
+    z-index: 2;
+}
+
+#bloomCanvas {
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#bloomCanvas.active {
+    opacity: 1;
+}
+
+/* Hologram Container */
+.hologram-container {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Transmission Header */
+.transmission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(0, 255, 255, 0.05);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    animation: fadeIn 1s ease-out;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #00ffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ffff;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+.signal-bars {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+}
+
+.bar {
+    width: 4px;
+    background: #00ffff;
+    box-shadow: 0 0 5px #00ffff;
+    animation: signalBar 1.5s ease-in-out infinite;
+}
+
+.bar:nth-child(1) {
+    height: 8px;
+    animation-delay: 0s;
+}
+
+.bar:nth-child(2) {
+    height: 12px;
+    animation-delay: 0.1s;
+}
+
+.bar:nth-child(3) {
+    height: 16px;
+    animation-delay: 0.2s;
+}
+
+.bar:nth-child(4) {
+    height: 20px;
+    animation-delay: 0.3s;
+}
+
+.bar:nth-child(5) {
+    height: 24px;
+    animation-delay: 0.4s;
+}
+
+@keyframes signalBar {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+/* Glitch Container */
+.glitch-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.holographic-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #00ffff;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff;
+    position: relative;
+    animation: glitchToStable 3s ease-out forwards;
+}
+
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+@keyframes glitchToStable {
+
+    0%,
+    5% {
+        transform: translate(0);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translate(-5px, 2px);
+        opacity: 0.7;
+    }
+
+    15% {
+        transform: translate(3px, -2px);
+        opacity: 0.8;
+    }
+
+    20% {
+        transform: translate(-2px, 1px);
+        opacity: 0.9;
+    }
+
+    25% {
+        transform: translate(4px, -1px);
+        opacity: 0.85;
+    }
+
+    30%,
+    100% {
+        transform: translate(0);
+        opacity: 1;
+    }
+}
+
+/* Message Box */
+.message-box {
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+    padding: 50px 40px;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    background: rgba(0, 20, 40, 0.8);
+    box-shadow:
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    animation: fadeInUp 1.5s ease-out 0.5s backwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hologram-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 255, 0.03) 2px,
+            rgba(0, 255, 255, 0.03) 4px);
+    pointer-events: none;
+    border-radius: 8px;
+}
+
+/* Message Content */
+.message-content {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.transmission-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #33ffff;
+    margin: 15px 0;
+    opacity: 0;
+    animation: textReveal 0.8s ease-out forwards;
+}
+
+#line1 {
+    animation-delay: 1s;
+}
+
+#line2 {
+    animation-delay: 1.5s;
+}
+
+#line3 {
+    animation-delay: 2s;
+}
+
+#line4 {
+    animation-delay: 3.5s;
+}
+
+@keyframes textReveal {
+    0% {
+        opacity: 0;
+        filter: blur(10px);
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
+}
+
+.bracket {
+    color: #0099ff;
+    font-weight: 700;
+}
+
+.main-message {
+    font-size: 1.8rem;
+    line-height: 1.8;
+    color: #f0f0f0;
+    margin: 40px 0;
+    font-weight: 400;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(0, 255, 255, 0.3);
+    opacity: 0;
+    animation: textReveal 1s ease-out 2.5s forwards, textPulse 3s ease-in-out 4s infinite;
+}
+
+@keyframes textPulse {
+
+    0%,
+    100% {
+        text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+    }
+}
+
+/* Question Container */
+.question-container {
+    margin: 40px 0;
+    opacity: 0;
+    animation: textReveal 1s ease-out 4s forwards;
+    text-align: center;
+}
+
+.holographic-question {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.glow-text {
+    background: linear-gradient(135deg, #00ffff 0%, #0099ff 50%, #00ffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+}
+
+/* Holographic Button */
+.holographic-button {
+    position: relative;
+    padding: 18px 50px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #00ffff;
+    background: transparent;
+    border: 2px solid #00ffff;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: textReveal 1s ease-out 4.5s forwards;
+    display: block;
+    margin: 0 auto;
+}
+
+.button-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.button-icon {
+    font-size: 0.8rem;
+}
+
+.button-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 153, 255, 0.2));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.holographic-button:hover {
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.6),
+        inset 0 0 20px rgba(0, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.holographic-button:hover .button-glow {
+    opacity: 1;
+}
+
+.holographic-button:active {
+    transform: translateY(0);
+}
+
+/* Confirmation Screen */
+.confirmation-screen {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    animation: fadeInScale 1s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.success-icon {
+    font-size: 5rem;
+    color: #00ffff;
+    margin-bottom: 30px;
+    animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-shadow: 0 0 30px #00ffff;
+}
+
+@keyframes successPop {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.success-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    margin-bottom: 40px;
+}
+
+.success-message {
+    padding: 40px;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    background: rgba(0, 20, 40, 0.6);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+}
+
+.success-main {
+    font-size: 1.6rem;
+    line-height: 2;
+    color: #ffffff;
+    margin: 30px 0;
+    font-weight: 400;
+}
+
+.highlight {
+    color: #00ffff;
+    font-weight: 600;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+.signature {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    margin-top: 40px;
+    color: #0099ff;
+    letter-spacing: 2px;
+}
+
+.screenshot-instruction {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(0, 255, 255, 0.05);
+    animation: fadeIn 1s ease-out 1s backwards;
+}
+
+.instruction-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: #00ffff;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Transmission Footer */
+.transmission-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(0, 255, 255, 0.05);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    animation: fadeIn 1s ease-out 0.5s backwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .holographic-title {
+        font-size: 2.2rem;
+        /* Increased from 2rem */
+        letter-spacing: 4px;
+        line-height: 1.2;
+        padding: 0 10px;
+    }
+
+    .message-box {
+        padding: 40px 25px;
+        /* Increased from 30px 20px */
+        margin: 20px 15px;
+    }
+
+    .transmission-text {
+        font-size: 0.8rem;
+        /* Increased from 0.75rem */
+        letter-spacing: 1.5px;
+        margin: 20px 0;
+        /* Increased from 15px */
+    }
+
+    .main-message {
+        font-size: 1.5rem;
+        /* Increased from 1.4rem */
+        line-height: 2;
+        margin: 50px 0;
+        /* Increased vertical breathing room */
+        padding: 0 10px;
+    }
+
+    .holographic-question {
+        font-size: 1.6rem;
+        /* Increased from 1.5rem */
+        letter-spacing: 2px;
+        line-height: 1.4;
+    }
+
+    .holographic-button {
+        padding: 18px 40px;
+        /* Increased from 14px 30px */
+        font-size: 1rem;
+        /* Increased from 0.9rem */
+        min-height: 56px;
+        /* Ensures proper touch target */
+        width: auto;
+        max-width: 90%;
+    }
+
+    .transmission-footer {
+        flex-direction: column;
+        gap: 15px;
+        /* Increased from 10px */
+        text-align: center;
+        padding: 20px 15px;
+        font-size: 0.75rem;
+    }
+
+    .success-title {
+        font-size: 2rem;
+        /* Increased from 1.8rem */
+        line-height: 1.3;
+    }
+
+    .success-main {
+        font-size: 1.4rem;
+        /* Increased from 1.3rem */
+        line-height: 2.2;
+        /* More breathing room */
+        padding: 0 10px;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 25px;
+    }
+
+    /* Better content wrapper spacing */
+    .content-wrapper {
+        padding: 30px 0;
+        min-height: auto;
+    }
+
+    /* Improve header spacing - stack vertically on mobile */
+    .transmission-header {
+        padding: 15px;
+        font-size: 0.75rem;
+        flex-direction: column;
+        /* Stack vertically */
+        align-items: center;
+        /* Center align */
+        gap: 15px;
+        /* Increased gap for vertical layout */
+        text-align: center;
+    }
+
+    .status-indicator {
+        font-size: 0.75rem;
+    }
+
+    /* Optimize confirmation screen */
+    .confirmation-screen {
+        padding: 0 15px;
+    }
+
+    .success-message {
+        padding: 30px 20px;
+    }
+
+    .screenshot-instruction {
+        margin-top: 25px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .holographic-title {
+        font-size: 1.8rem;
+        /* Increased from 1.5rem */
+        letter-spacing: 2px;
+        padding: 0 15px;
+    }
+
+    .transmission-header {
+        padding: 12px;
+    }
+
+    .status-text {
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+    }
+
+    .holographic-question {
+        font-size: 1.4rem;
+        /* Increased from 1.2rem */
+        padding: 0 10px;
+    }
+
+    .button-inner {
+        gap: 10px;
+        /* Increased from 8px */
+        flex-wrap: nowrap;
+    }
+
+    .main-message {
+        font-size: 1.3rem;
+        line-height: 2;
+    }
+
+    .message-box {
+        padding: 30px 20px;
+    }
+
+    /* Make signal bars more visible */
+    .signal-bars {
+        gap: 3px;
+    }
+
+    .bar {
+        width: 3px;
+    }
+
+    /* Optimize glitch container */
+    .glitch-container {
+        margin-bottom: 30px;
+    }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 896px) and (orientation: landscape) {
+    .hologram-container {
+        padding: 20px 15px;
+    }
+
+    .content-wrapper {
+        padding: 20px 0;
+    }
+
+    .message-box {
+        padding: 30px 25px;
+    }
+
+    .main-message {
+        margin: 30px 0;
+        font-size: 1.3rem;
+    }
+
+    .question-container {
+        margin: 25px 0;
+    }
+
+    .holographic-title {
+        font-size: 1.8rem;
+    }
+
+    .transmission-header,
+    .transmission-footer {
+        padding: 12px 15px;
+    }
+}
