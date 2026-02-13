@@ -61,13 +61,26 @@ class Spark {
 
 // Detect mobile devices and optimize particle counts
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+const isVerySmallScreen = window.innerWidth < 480;
 const MOBILE_SPARK_COUNT = 20; // Reduced from 50
 const DESKTOP_SPARK_COUNT = 50;
 const MOBILE_BLOOM_PARTICLES = 15; // Reduced from 30
 const DESKTOP_BLOOM_PARTICLES = 30;
 
-const sparks = Array.from({ length: isMobile ? MOBILE_SPARK_COUNT : DESKTOP_SPARK_COUNT }, () => new Spark());
+// Further reduce particles on very small screens
+const FINAL_SPARK_COUNT = isVerySmallScreen ? 10 : (isMobile ? MOBILE_SPARK_COUNT : DESKTOP_SPARK_COUNT);
+const FINAL_BLOOM_COUNT = isVerySmallScreen ? 8 : (isMobile ? MOBILE_BLOOM_PARTICLES : DESKTOP_BLOOM_PARTICLES);
+
+const sparks = Array.from({ length: FINAL_SPARK_COUNT }, () => new Spark());
 let sparkAnimationId = null; // Track spark animation frame ID
+
+// Disable scan-line animation on mobile (performance)
+if (isMobile) {
+    const scanLines = document.querySelector('.scan-lines');
+    if (scanLines) {
+        scanLines.style.animation = 'none';
+    }
+}
 
 // Throttle canvas rendering on mobile
 let lastRenderTime = 0;
@@ -165,7 +178,7 @@ function animateBloom() {
     bloomCtx.fillRect(0, 0, bloomCanvas.width, bloomCanvas.height);
 
     // Add new particles (only if under strict limit)
-    const MAX_PARTICLES = 30; // Reduced from 50
+    const MAX_PARTICLES = FINAL_BLOOM_COUNT;
 
     if (bloomParticles.length < MAX_PARTICLES) {
         const centerX = bloomCanvas.width / 2;
@@ -278,10 +291,31 @@ function randomGlitch() {
     }
 }
 
+// Simplify glitch effects on mobile - reduce frequency
+const glitchIntervalTime = isVerySmallScreen ? 10000 : (isMobile ? 7000 : 5000);
+
 // Start subtle glitches after initial animation
 setTimeout(() => {
-    glitchInterval = setInterval(randomGlitch, 5000);
+    glitchInterval = setInterval(randomGlitch, glitchIntervalTime);
 }, 5000);
+
+// Add resize handler to update particle count dynamically
+window.addEventListener('resize', () => {
+    const wasSmall = sparks.length < 30;
+    const isSmallNow = window.innerWidth < 768;
+
+    if (wasSmall !== isSmallNow) {
+        // Resize happened, adjust particle count
+        const newCount = isSmallNow ? (window.innerWidth < 480 ? 10 : 20) : 50;
+        if (sparks.length > newCount) {
+            sparks.splice(newCount);
+        } else {
+            while (sparks.length < newCount) {
+                sparks.push(new Spark());
+            }
+        }
+    }
+});
 
 // Add hover effect to button
 confirmButton.addEventListener('mouseenter', () => {
