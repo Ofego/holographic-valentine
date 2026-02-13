@@ -370,6 +370,46 @@ body {
     }
 }
 
+/* Wait Message Styling */
+.wait-message {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: #66ccff;
+    margin: 25px 0;
+    opacity: 0;
+    animation: textReveal 1s ease-out 3.2s forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-style: italic;
+}
+
+.blink-indicator {
+    width: 10px;
+    height: 10px;
+    background: #00ffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    animation: blink 1.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+}
+
 /* Question Container */
 .question-container {
     margin: 40px 0;
@@ -784,6 +824,18 @@ body {
     .confirmation-screen {
         padding: 0;
     }
+
+    /* Wait message mobile adjustments */
+    .wait-message {
+        font-size: 0.95rem;
+        margin: 20px 0;
+        gap: 10px;
+    }
+
+    .blink-indicator {
+        width: 8px;
+        height: 8px;
+    }
 }
 
 /* ============================================
@@ -840,6 +892,18 @@ body {
 
     .signature {
         font-size: 1rem;
+    }
+
+    /* Wait message extra small mobile */
+    .wait-message {
+        font-size: 0.85rem;
+        margin: 15px 0;
+        gap: 8px;
+    }
+
+    .blink-indicator {
+        width: 7px;
+        height: 7px;
     }
 }
 

@@ -207,6 +207,8 @@ function startBloom() {
 
     bloomActive = true;
     bloomCanvas.classList.add('active');
+    bloomCanvas.style.animationDelay = '4s'; /* Updated from 3.5s to make room for wait message */
+
     animateBloom();
 }
 
